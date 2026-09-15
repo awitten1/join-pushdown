@@ -11,20 +11,21 @@
 
 namespace duckdb {
 
-inline void WaddleScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
+void WaddleScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
 	auto &name_vector = args.data[0];
 	UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
 		return StringVector::AddString(result, "...........🦆 " + name.GetString());
 	});
 }
 
-inline void WaddleOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
-	auto &name_vector = args.data[0];
-	UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
-		return StringVector::AddString(result, "Waddle " + name.GetString() + ", my linked OpenSSL version is " +
-		                                           OPENSSL_VERSION_TEXT);
-	});
-}
+// seems unecessary for now
+// inline void WaddleOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
+// 	auto &name_vector = args.data[0];
+// 	UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
+// 		return StringVector::AddString(result, "Waddle " + name.GetString() + ", my linked OpenSSL version is " +
+// 		                                           OPENSSL_VERSION_TEXT);
+// 	});
+// }
 
 static void LoadInternal(ExtensionLoader &loader) {
 	// Register a scalar function
@@ -34,9 +35,9 @@ static void LoadInternal(ExtensionLoader &loader) {
 	loader.RegisterFunction(waddle_scalar_function);
 
 	// Register another scalar function
-	auto waddle_openssl_version_scalar_function = ScalarFunction("waddle_openssl_version", {LogicalType::VARCHAR},
-	                                                             LogicalType::VARCHAR, WaddleOpenSSLVersionScalarFun);
-	loader.RegisterFunction(waddle_openssl_version_scalar_function);
+	// auto waddle_openssl_version_scalar_function = ScalarFunction("waddle_openssl_version", {LogicalType::VARCHAR},
+	//                                                              LogicalType::VARCHAR, WaddleOpenSSLVersionScalarFun);
+	// loader.RegisterFunction(waddle_openssl_version_scalar_function);
 }
 
 void WaddleExtension::Load(ExtensionLoader &loader) {

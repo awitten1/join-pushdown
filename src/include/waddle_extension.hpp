@@ -9,6 +9,7 @@ public:
 	void Load(ExtensionLoader &db) override;
 	std::string Name() override;
 	std::string Version() const override;
+	void WaddleScalarFun(DataChunk &args, ExpressionState &state, Vector &result);
 };
 
 } // namespace duckdb
