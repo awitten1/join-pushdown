@@ -18,6 +18,20 @@ void WaddleScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
 	});
 }
 
+void TestScalarFunc(DataChunk &args, ExpressionState &state, Vector &result) {
+	// I think that when executing, this function modifies the address pointed to by result
+	// that is the output space, hence its data isn't really an input (I think)
+
+	// args.ToString() returns the number of columns in something, then each argument
+	// on my custom function, which I called like select quack('test'), it said 1 column, and test
+
+	// it's not currently clear what state is...
+	auto &name_vector = args.data[0];
+	UnaryExecutor::Execute<string_t, string_t>(name_vector, result, args.size(), [&](string_t name) {
+		return StringVector::AddString(result, "args: " + args.ToString());
+	});
+}
+
 // seems unecessary for now
 // inline void WaddleOpenSSLVersionScalarFun(DataChunk &args, ExpressionState &state, Vector &result) {
 // 	auto &name_vector = args.data[0];
@@ -33,6 +47,11 @@ static void LoadInternal(ExtensionLoader &loader) {
 	    ScalarFunction("waddle", {LogicalType::VARCHAR}, LogicalType::VARCHAR, WaddleScalarFun);
 
 	loader.RegisterFunction(waddle_scalar_function);
+
+	// register test my scalar function
+	auto test_scalar_function =
+		ScalarFunction("quack", {LogicalType::VARCHAR}, LogicalType::VARCHAR, TestScalarFunc);
+	loader.RegisterFunction(test_scalar_function);
 
 	// Register another scalar function
 	// auto waddle_openssl_version_scalar_function = ScalarFunction("waddle_openssl_version", {LogicalType::VARCHAR},
